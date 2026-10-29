@@ -31,8 +31,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun titulo(modifier: Modifier = Modifier) {
-    
+fun Titulo(modifier: Modifier = Modifier) {
+    Text(
+        text = "Lista de compras",
+        modifier = modifier
+    )
 }
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
