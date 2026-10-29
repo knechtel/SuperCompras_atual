@@ -1,5 +1,6 @@
 package com.app.supercompras
 
+import androidx.compose.foundation.Image
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.app.supercompras.ui.theme.SuperComprasTheme
 
@@ -37,18 +39,20 @@ fun Titulo(modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
+
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello Fernando",
-        modifier = modifier
+fun ImagemTopo(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.image_topo),
+        contentDescription = null
     )
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun GreetingPreview() {
+private fun ImagemTopoPreview() {
     SuperComprasTheme {
-        Greeting("Android")
+        ImagemTopo()
     }
 }
+
