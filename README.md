@@ -5,3 +5,4 @@ Aplicativo desenvolvido durante o Curso de Desenvolvimento Android com Kotlin na
 ## SuperCompras
 
 ![supercompras_cover (1)](https://github.com/user-attachments/assets/80d39fd3-a70e-4769-bf76-c0294f5f503a)
+# SuperCompras_atual
