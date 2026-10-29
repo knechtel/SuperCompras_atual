@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.app.supercompras"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.app.supercompras"
@@ -41,6 +41,7 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

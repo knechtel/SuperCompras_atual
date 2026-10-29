@@ -1,5 +1,6 @@
 package com.app.supercompras
 
+
 import androidx.compose.foundation.Image
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -22,15 +23,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             SuperComprasTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    ImagemTopo(modifier = Modifier.padding(innerPadding))
+                    //Titulo(modifier = Modifier.padding(innerPadding))
+               //     Icone(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
     }
 }
+
+
 
 @Composable
 fun Titulo(modifier: Modifier = Modifier) {
