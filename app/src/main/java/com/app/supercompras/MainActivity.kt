@@ -21,8 +21,11 @@ import androidx.compose.ui.unit.dp
 import com.app.supercompras.ui.theme.SuperComprasTheme
 import java.util.IllegalFormatConversionException
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.vector.ImageVector
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,9 +33,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             SuperComprasTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    ImagemTopo(modifier = Modifier.padding(innerPadding))
+                  //  ImagemTopo(modifier = Modifier.padding(innerPadding))
                     //Titulo(modifier = Modifier.padding(innerPadding))
-                   //Icone(modifier = Modifier.padding(innerPadding))
+                    Icone(
+                        modifier = Modifier.padding(innerPadding),
+                        icone = Icons.Default.Delete
+                    )
                 }
             }
         }
@@ -61,8 +67,8 @@ fun ImagemTopo(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Icone(modifier: Modifier = Modifier) {
-    Icon(Icons.Default.Edit, contentDescription = "Edit", modifier = modifier)
+fun Icone(icone: ImageVector, modifier: Modifier = Modifier) {
+    Icon(icone, contentDescription = "Editar", modifier = modifier)
 }
 
 @Preview
@@ -70,8 +76,11 @@ fun Icone(modifier: Modifier = Modifier) {
 private fun IconePreview() {
     // Renamed preview function to IconePreview to prevent recursive call to itself
     SuperComprasTheme {
-        Icone()
+        Icone(
+            icone = Icons.Default.Delete
+        )
     }
+
 }
 
 @Preview
