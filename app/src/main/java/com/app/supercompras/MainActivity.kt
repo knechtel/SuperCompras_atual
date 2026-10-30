@@ -6,6 +6,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,12 +35,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             SuperComprasTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                  //  ImagemTopo(modifier = Modifier.padding(innerPadding))
-                    //Titulo(modifier = Modifier.padding(innerPadding))
-                    Icone(
-                        modifier = Modifier.padding(innerPadding),
-                        icone = Icons.Default.Delete
-                    )
+                    Column(verticalArrangement = Arrangement.Top) {
+                        ImagemTopo(modifier = Modifier.padding(innerPadding))
+                        Titulo(modifier = Modifier.padding(innerPadding))
+
+                    }
                 }
             }
         }
