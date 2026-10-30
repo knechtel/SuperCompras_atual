@@ -26,27 +26,37 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.app.supercompras.ui.theme.Typography
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             SuperComprasTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(verticalArrangement = Arrangement.Top) {
-                        ImagemTopo(modifier = Modifier.padding(innerPadding))
-                        Titulo(texto = "Lista de Compras", modifier = Modifier.padding(innerPadding))
-                        Titulo(texto = "Comprado", modifier = Modifier.padding(innerPadding))
+
+                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Top
+                        ) {
+                            ImagemTopo()
+
+                            Titulo(texto = "Lista de Compras")
+
+                            Titulo(texto = "Comprado")
+                        }
                     }
                 }
-            }
+
         }
     }
 }
-
-
 
 
 @Composable
@@ -55,13 +65,13 @@ fun Titulo(texto: String, modifier: Modifier = Modifier) {
 }
 
 
-
 @Composable
 fun ImagemTopo(modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(R.drawable.image_topo),
         contentDescription = null,
-        modifier =  modifier.size(160.dp)
+        modifier = modifier.size(160.dp),
+
     )
 }
 
