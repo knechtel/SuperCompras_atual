@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -40,6 +41,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.app.supercompras.data.AppDatabase
+import com.app.supercompras.data.ItemCompra
+import com.app.supercompras.data.ItemCompraRepository
+import com.app.supercompras.ui.ItemCompraViewModel
+import com.app.supercompras.ui.ItemCompraViewModelFactory
 import com.app.supercompras.ui.theme.Marinho
 import com.app.supercompras.ui.theme.SuperComprasTheme
 import com.app.supercompras.ui.theme.Typography
@@ -50,10 +57,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val db = AppDatabase.getDatabase(this)
+        val repository = ItemCompraRepository(db.itemCompraDao())
+        val viewModelFactory = ItemCompraViewModelFactory(repository)
+
         setContent {
             SuperComprasTheme() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    ListaDeCompras(Modifier.padding(innerPadding))
+                    val viewModel: ItemCompraViewModel = viewModel(factory = viewModelFactory)
+                    ListaDeCompras(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }
@@ -61,8 +77,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ListaDeCompras(modifier: Modifier = Modifier) {
-    var listaDeItens by rememberSaveable { mutableStateOf(listOf<ItemCompra>()) }
+fun ListaDeCompras(
+    viewModel: ItemCompraViewModel,
+    modifier: Modifier = Modifier
+) {
+    val listaDeItens by viewModel.listaDeItens.collectAsState()
 
     Column(
         verticalArrangement = Arrangement.Top,
@@ -70,8 +89,8 @@ fun ListaDeCompras(modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         ImagemTopo()
-        AdicionarItem(aoSalvarItem = { novoItem ->
-            listaDeItens = listaDeItens + novoItem
+        AdicionarItem(aoSalvarItem = { texto, dataHora ->
+            viewModel.adicionarItem(texto, dataHora)
         })
         Spacer(modifier = Modifier.height(48.dp))
         Titulo(
@@ -80,25 +99,13 @@ fun ListaDeCompras(modifier: Modifier = Modifier) {
         ListaDeItems(
             lista = listaDeItens.filter { !it.foiComprado },
             aoMudarStatus = { itemSelecionado ->
-                listaDeItens = listaDeItens.map { itemMap ->
-                    if (itemSelecionado == itemMap) {
-                        itemSelecionado.copy(foiComprado = !itemSelecionado.foiComprado)
-                    } else {
-                        itemMap
-                    }
-                }
+                viewModel.alternarStatusItem(itemSelecionado)
             },
             aoRemoverItem = { itemRemovido ->
-                listaDeItens = listaDeItens - itemRemovido
+                viewModel.removerItem(itemRemovido)
             },
             aoEditarItem = { itemEditado, novoTexto ->
-                listaDeItens = listaDeItens.map { itemAtual ->
-                    if (itemAtual == itemEditado) {
-                        itemAtual.copy(texto = novoTexto)
-                    } else {
-                        itemAtual
-                    }
-                }
+                viewModel.editarItem(itemEditado, novoTexto)
             }
         )
 
@@ -108,25 +115,13 @@ fun ListaDeCompras(modifier: Modifier = Modifier) {
             ListaDeItems(
                 lista = listaDeItens.filter { it.foiComprado },
                 aoMudarStatus = { itemSelecionado ->
-                    listaDeItens = listaDeItens.map { itemMap ->
-                        if (itemSelecionado == itemMap) {
-                            itemSelecionado.copy(foiComprado = !itemSelecionado.foiComprado)
-                        } else {
-                            itemMap
-                        }
-                    }
+                    viewModel.alternarStatusItem(itemSelecionado)
                 },
                 aoRemoverItem = { itemRemovido ->
-                    listaDeItens = listaDeItens - itemRemovido
+                    viewModel.removerItem(itemRemovido)
                 },
                 aoEditarItem = { itemEditado, novoTexto ->
-                    listaDeItens = listaDeItens.map { itemAtual ->
-                        if (itemAtual == itemEditado) {
-                            itemAtual.copy(texto = novoTexto)
-                        } else {
-                            itemAtual
-                        }
-                    }
+                    viewModel.editarItem(itemEditado, novoTexto)
                 }
             )
         }
@@ -154,7 +149,7 @@ fun ListaDeItems(
 }
 
 @Composable
-fun AdicionarItem(aoSalvarItem: (item: ItemCompra) -> Unit, modifier: Modifier = Modifier) {
+fun AdicionarItem(aoSalvarItem: (texto: String, dataHora: String) -> Unit, modifier: Modifier = Modifier) {
     var texto by rememberSaveable { mutableStateOf("") }
     OutlinedTextField(
         value = texto,
@@ -176,8 +171,10 @@ fun AdicionarItem(aoSalvarItem: (item: ItemCompra) -> Unit, modifier: Modifier =
     Button(
         shape = RoundedCornerShape(24.dp),
         onClick = {
-            aoSalvarItem(ItemCompra(texto, false, getDataHora()))
-            texto = ""
+            if (texto.isNotBlank()) {
+                aoSalvarItem(texto, getDataHora())
+                texto = ""
+            }
         },
         modifier = modifier
     ) {
@@ -304,7 +301,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 private fun AdicionarItemPreview() {
     SuperComprasTheme {
-        AdicionarItem(aoSalvarItem = {})
+        AdicionarItem(aoSalvarItem = { _, _ -> })
     }
 }
 
@@ -312,7 +309,7 @@ private fun AdicionarItemPreview() {
 @Composable
 fun ItemDaListaPreview() {
     SuperComprasTheme {
-        ItemDaLista(item = ItemCompra("Suco", false, "Segunda-feira"))
+        ItemDaLista(item = ItemCompra(texto = "Suco", foiComprado = false, datahora = "Segunda-feira"))
     }
 }
 
@@ -347,9 +344,3 @@ fun GreetingPreview() {
         Greeting("Android")
     }
 }
-
-data class ItemCompra(
-    val texto: String,
-    var foiComprado: Boolean = false,
-    val datahora: String
-)
